@@ -53,47 +53,52 @@ body{
   padding:8px 16px;overflow:hidden;min-height:0;
 }
 .card-scene{
-  width:100%;max-width:420px;height:100%;max-height:560px;
-  perspective:1200px;
+  width:100%;max-width:420px;height:100%;
+  position:relative;
 }
+/* card is now a simple scrollable panel — no flip */
 .card{
-  width:100%;height:100%;position:relative;
-  transform-style:preserve-3d;
-  transition:transform .45s cubic-bezier(.4,0,.2,1);
-  border-radius:22px;cursor:pointer;
-}
-.card.flipped{transform:rotateY(180deg)}
-.face{
-  position:absolute;inset:0;border-radius:22px;
-  backface-visibility:hidden;-webkit-backface-visibility:hidden;
-  padding:24px 22px 18px;display:flex;flex-direction:column;overflow:hidden;
-}
-.face-front{
-  background:linear-gradient(150deg,#1e1e38 0%,#25254a 60%,#1a1a30 100%);
+  width:100%;height:100%;border-radius:22px;
+  background:linear-gradient(160deg,#1e1e38 0%,#232246 55%,#1a1a30 100%);
   border:1px solid #38386a;
   box-shadow:0 12px 40px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.04);
+  display:flex;flex-direction:column;overflow:hidden;
+  cursor:default;
 }
-.face-back{
-  background:linear-gradient(150deg,#172030 0%,#1c2e42 60%,#152028 100%);
-  border:1px solid #2a4a6a;
-  box-shadow:0 12px 40px rgba(0,0,0,.55);
-  transform:rotateY(180deg);
+
+/* card header — always visible */
+.card-header{
+  padding:22px 22px 16px;
+  flex-shrink:0;
+  border-bottom:1px solid #2a2a52;
 }
-.card-no{font-size:11px;color:var(--accent);letter-spacing:.2em;font-weight:700;margin-bottom:10px}
-.card-name{font-size:28px;font-weight:800;line-height:1.2;color:#fff;margin-bottom:14px;letter-spacing:-.02em}
-.card-line{height:1px;background:linear-gradient(90deg,#7c6fff55,#48cfad22,transparent);margin-bottom:14px;flex-shrink:0}
-.card-summary{font-size:14.5px;line-height:1.75;color:#b8b8d8;flex:1;overflow-y:auto}
-.card-summary::-webkit-scrollbar{width:3px}
-.card-summary::-webkit-scrollbar-thumb{background:#4444aa;border-radius:2px}
-.card-hint{margin-top:12px;font-size:11px;color:#44449a;text-align:center;flex-shrink:0}
-.back-name{font-size:20px;font-weight:700;color:#fff;margin-bottom:16px;flex-shrink:0;line-height:1.3}
-.back-scroll{flex:1;overflow-y:auto;min-height:0}
-.back-scroll::-webkit-scrollbar{width:3px}
-.back-scroll::-webkit-scrollbar-thumb{background:#336688;border-radius:2px}
-.back-sec{margin-bottom:16px}
-.back-sec:last-child{margin-bottom:0}
-.back-lbl{font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--green);margin-bottom:6px;text-transform:uppercase}
-.back-txt{font-size:13.5px;line-height:1.7;color:#a8c0d0}
+.card-no{font-size:11px;color:var(--accent);letter-spacing:.2em;font-weight:700;margin-bottom:8px}
+.card-name{font-size:26px;font-weight:800;line-height:1.2;color:#fff;letter-spacing:-.02em}
+
+/* scrollable content */
+.card-body{
+  flex:1;overflow-y:auto;padding:18px 22px 16px;min-height:0;
+  display:flex;flex-direction:column;gap:18px;
+}
+.card-body::-webkit-scrollbar{width:3px}
+.card-body::-webkit-scrollbar-track{background:transparent}
+.card-body::-webkit-scrollbar-thumb{background:#4444aa;border-radius:2px}
+
+.section{}
+.section-label{
+  font-size:10px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;margin-bottom:7px;
+  display:flex;align-items:center;gap:6px;
+}
+.section-label::after{content:'';flex:1;height:1px;background:currentColor;opacity:.2}
+.lbl-summary{color:var(--accent)}
+.lbl-strength{color:var(--green)}
+.lbl-detail{color:#f0a060}
+.lbl-other{color:var(--muted)}
+.section-text{
+  font-size:13.5px;line-height:1.75;color:#c0c0e0;
+}
+.section-text.summary{font-size:14.5px;color:#d0d0f0}
 
 /* ACTIONS */
 .actions{
@@ -121,10 +126,10 @@ body{
 .btn-heart:active{transform:scale(.85)}
 
 /* ANIMATIONS */
-@keyframes swL{to{transform:translateX(-110%) rotate(-12deg) scale(.88);opacity:0}}
-@keyframes swR{to{transform:translateX(110%) rotate(12deg) scale(.88);opacity:0}}
-@keyframes enR{from{transform:translateX(55%) scale(.9);opacity:0}to{transform:none;opacity:1}}
-@keyframes enL{from{transform:translateX(-55%) scale(.9);opacity:0}to{transform:none;opacity:1}}
+@keyframes swL{to{transform:translateX(-110%) rotate(-10deg) scale(.9);opacity:0}}
+@keyframes swR{to{transform:translateX(110%) rotate(10deg) scale(.9);opacity:0}}
+@keyframes enR{from{transform:translateX(55%) scale(.92);opacity:0}to{transform:none;opacity:1}}
+@keyframes enL{from{transform:translateX(-55%) scale(.92);opacity:0}to{transform:none;opacity:1}}
 .swL .card{animation:swL .28s ease forwards}
 .swR .card{animation:swR .28s ease forwards}
 .enR .card{animation:enR .32s ease forwards}
@@ -198,9 +203,9 @@ body{
 
 <div id="cardArea" class="card-area">
   <div class="card-scene" id="scene">
-    <div class="card" id="card" onclick="flip()">
-      <div class="face face-front" id="front"></div>
-      <div class="face face-back" id="back"></div>
+    <div class="card" id="card">
+      <div class="card-header" id="header"></div>
+      <div class="card-body" id="body"></div>
     </div>
   </div>
 </div>
@@ -248,24 +253,17 @@ import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.14
 import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
-// ── DATA ──
 const DATA = [{"no": 1, "name": "WAmazing", "summary": "無料SIM配布をフックに、観光情報・宿・交通・体験・決済をワンストップ提供する訪日旅行プラットフォーム。台湾・香港・中国など中華圏に強い。", "parent": "仙台空港の台湾・中国直行便の到着客を空港でのSIM配布から囲い込み、蔵王・松島など周辺へ送客しやすい。地方送客に強みがあり東北と相性が良い。", "detail": "2016年設立、加藤史子代表。WAmazing Discover（多言語ガイド）やWAmazing Play（体験予約）を展開。", "other": "実例（出典: corp.wamazing.com）"}, {"no": 2, "name": "MATCHA", "summary": "10言語で日本の観光・文化を発信する訪日メディア。宿・ツアー予約やクーポン配布も行う。", "parent": "英語化が遅れる東北の観光情報を多言語で発信でき、知名度の低い仙台の体験を海外に訴求する入口になる。", "detail": "2013年設立、青木優代表。寺田倉庫と資本業務提携。多国籍編集体制。", "other": "実例（出典: AXIS Insights）"}, {"no": 3, "name": "Magical Trip", "summary": "現地ガイドによる食べ歩き・バーホッピング・ナイトツアーなど少人数体験を提供。ガイドのシェア型で人手不足を解消。", "parent": "国分町の横丁・牛タン店をめぐる夜のフードツアーと好相性。東北大生など学生をガイド副業として巻き込める。", "detail": "ローカルガイドと訪日客をマッチング。深い文化体験に特化。", "other": "実例（出典: WebSearch）"}, {"no": 4, "name": "Bespoke（Bebot）", "summary": "AIチャットボットで宿泊・観光施設の多言語接客・FAQ対応・周辺案内を自動化。", "parent": "人手不足の仙台のホテル・観光案内所の問い合わせ自動化に有効。多言語対応を低コストで実現。", "detail": "ホテル向けAIコンシェルジュ『Bebot』。データ分析で送客も。", "other": "実例"}, {"no": 5, "name": "byFood.com", "summary": "訪日グルメ予約プラットフォーム。予約1件ごとに世界の子どもへ寄付するソーシャル型。", "parent": "牛タン・笹かま・ずんだなど仙台の食文化を世界へ発信しつつ、社会貢献ストーリーを付与できる。", "detail": "Food for Happiness（SDGs）を運営。レストラン・料理教室・フードツアーを掲載。", "other": "実例（出典: kepple）"}, {"no": 6, "name": "HafH（KabuK Style）", "summary": "月額定額で世界・国内の宿に泊まれる旅のサブスク。", "parent": "仙台の宿をサブスク網に載せ、平日・閑散期の稼働を埋められる。長期滞在の関係人口づくりにも。", "detail": "2018年設立。星野リゾート（OMO/BEB）と資本業務提携。", "other": "実例（出典: AXIS Insights）"}, {"no": 7, "name": "ADDress", "summary": "全国の空き家・別荘を活用した定額制の多拠点居住サブスク（光熱費込み月額）。", "parent": "仙台近郊の空き家・古民家を長期滞在拠点に転換でき、ワーケーション需要を取り込める。空き家問題解決にも。", "detail": "2018年設立、佐別当隆志代表。300拠点以上、住み放題。", "other": "実例（出典: AXIS Insights）"}, {"no": 8, "name": "Tabist", "summary": "中小の旅館・ホテルをDX化しブランド統一。宿泊管理・需要連動価格を提供。", "parent": "秋保・作並温泉の家族経営旅館はDX余地が大きく、省人化と集客改善の効果が見込める。", "detail": "旧OYO Japan。2022年Tabistに改称。全国200施設以上。", "other": "実例（出典: AXIS Insights）"}, {"no": 9, "name": "aipass", "summary": "非接触スマートチェックインを中核とする宿泊基幹システム。顧客分析で接客・業務効率化。", "parent": "人手不足の温泉旅館の省人化・フロント無人化に直結。閑散期の少人数運営を支える。", "detail": "2019年設立、辻慎太郎代表。Experience Systemを標榜。", "other": "実例（出典: AXIS Insights）"}, {"no": 10, "name": "メトロエンジン", "summary": "AI（ディープラーニング）による宿泊のダイナミックプライシング・レベニュー管理。", "parent": "七夕まつりや楽天戦などイベント連動で仙台の宿の価格最適化ができ、収益最大化に寄与。", "detail": "2016年設立。民泊・マンスリー管理、メディア『ホテルバンク』も運営。", "other": "実例（出典: AXIS Insights）"}, {"no": 11, "name": "Relux（Loco Partners）", "summary": "プロが厳選した高級ホテル・旅館のみを扱う予約サービス。", "parent": "秋保の高級旅館を富裕層インバウンドに訴求でき、高単価送客が狙える。", "detail": "2011年設立。KDDIグループ。", "other": "実例（出典: AXIS Insights）"}, {"no": 12, "name": "アソビュー！", "summary": "レジャー・体験・日帰り温泉の電子チケット予約プラットフォーム。", "parent": "仙台うみの杜水族館・蔵王・ものづくり体験の電子チケット化で当日販売やキャッシュレスを実現。", "detail": "2011年設立、山野智久代表。7,000施設以上掲載。", "other": "実例（出典: AXIS Insights）"}, {"no": 13, "name": "Stayway", "summary": "世界2万都市以上の多様な宿泊（民泊・町家・コテージ等）を横断比較。", "parent": "仙台の民泊・町家など個性的な宿の露出を高め、多様な滞在ニーズに応える。", "detail": "2017年設立、佐藤淳代表。中小・地域のポテンシャル開放を掲げる。", "other": "実例（出典: AXIS Insights）"}, {"no": 14, "name": "SAGOJO / TENJIKU", "summary": "旅をしながら仕事ができる求人サイト。地域の手伝いで無料宿泊できるTENJIKUも運営。", "parent": "学生が地域の手伝いをしながら滞在し、東北の関係人口づくりにつながる。仙台発の若者発信にも。", "detail": "2015年設立、新拓也代表。スキルを活かす旅×ワーク。", "other": "実例（出典: AXIS Insights）"}, {"no": 15, "name": "令和トラベル（NEWT）", "summary": "ツアー・5つ星ホテル予約を簡単にする海外旅行アプリ。第1種旅行業ライセンス。", "parent": "アウトバウンド事業だが、UX設計や旅行業ライセンス運用は地方OTA立ち上げの参考になる。", "detail": "2021年設立、篠塚孝哉代表（Relux創業者）。", "other": "実例（アウトバウンド／出典: AXIS Insights）"}, {"no": 16, "name": "Holiday", "summary": "月間400万人が使う投稿型の旅行プランニングアプリ。自治体公式アカウントも。", "parent": "仙台市・宮城県が公式アカウントで低コストに観光情報を発信できる。", "detail": "2014年再ローンチ。クックパッドからMBO。", "other": "実例（出典: AXIS Insights）"}, {"no": 17, "name": "ロコタビ（LOCOTABI）", "summary": "海外在住日本人によるCtoCコンシェルジュ／スキルシェア。", "parent": "海外の仙台ファンや東北留学経験者をオンラインガイド・通訳として活用できる。", "detail": "2015年創業（旧トラベロコ）。海外在住登録者5万人超。", "other": "実例（出典: AXIS Insights）"}, {"no": 18, "name": "Fun Japan（Fun Group）", "summary": "訪日客向けツアー・アクティビティブランド『Fun』。国内外17社のOTAと提携。", "parent": "東北周遊ツアーの造成・海外OTA連携で仙台発着の商品を世界に流通できる。", "detail": "2014年設立、三木健司代表。70カ国以上が利用。", "other": "実例（出典: AXIS Insights）"}, {"no": 19, "name": "Wayfarer", "summary": "ホテルDX×不動産で収益を最大化（Materia/Kabin）。京都中心に運営。", "parent": "仙台の遊休ビル・空き物件を宿泊施設へ転換する投資・運営モデルの参考になる。", "detail": "2019年設立。不動産投資収益を30〜70%改善した実績。", "other": "実例（出典: kepple）"}, {"no": 20, "name": "skyticket（アドベンチャー）", "summary": "航空券・ホテル・高速バス・レンタカーを比較予約する総合OTA。", "parent": "仙台空港のLCCや高速バスの予約導線として、訪日個人客の二次交通確保に役立つ。", "detail": "2006年設立。2014年マザーズ上場。", "other": "実例（出典: AXIS Insights）"}, {"no": 21, "name": "tripla", "summary": "ホテルの直販予約エンジン＋AIチャット。OTA手数料依存を低減。", "parent": "OTA手数料に悩む仙台・東北の旅館の直販化・多言語予約を支援できる。", "detail": "宿泊施設のDX SaaS。", "other": "実例"}, {"no": 22, "name": "Payke", "summary": "商品バーコードを読むと多言語で説明が出るアプリ。購買を後押し。", "parent": "地酒・笹かま・萩の月などの土産物を多言語説明し、訪日客の購買単価向上に寄与。", "detail": "免税店・土産物店向け。台湾・中国客に強い。", "other": "実例"}, {"no": 23, "name": "WOVN.io（Wovn Technologies）", "summary": "Webサイト・アプリを短期間で多言語化するSaaS。", "parent": "仙台市・宮城県の観光サイトや施設サイトを即多言語化し、海外からの検索流入を増やせる。", "detail": "ローカライズ自動化。官公庁・大手導入多数。", "other": "実例"}, {"no": 24, "name": "Linktivity", "summary": "観光施設の電子チケットを国内外OTAに流通させる基盤。", "parent": "松島遊覧船・蔵王ロープウェイ等の入場券を海外OTAで事前販売でき、当日窓口の混雑も緩和。", "detail": "チケットのAPI流通・在庫管理。", "other": "実例"}, {"no": 25, "name": "Wabunka（和文化）", "summary": "上質な日本文化体験（茶道・工芸・寺社等）を予約できる高付加価値プラットフォーム。", "parent": "仙台箪笥・堤焼・茶の湯など東北の工芸・文化体験を高単価商品化し、富裕層に訴求できる。", "detail": "プレミアム文化体験に特化。", "other": "実例"}, {"no": 26, "name": "Otonami", "summary": "職人工房・寺社などでの『大人の文化体験』予約サービス。", "parent": "仙台の職人・寺社の非公開体験を商品化し、ストーリー性ある滞在を提供できる。", "detail": "上質な体験のキュレーション型予約。", "other": "実例"}, {"no": 27, "name": "Huber.（TOMODACHI GUIDE）", "summary": "訪日客と地元学生ガイドをマッチングする観光ガイドサービス。", "parent": "東北大をはじめ学生の多い仙台はガイド人材が豊富で、学生ガイド事業の余地が大きい。", "detail": "神奈川発。地域ガイド育成モデル。", "other": "実例"}, {"no": 28, "name": "aini（旧TABICA）", "summary": "農業・漁業・暮らし体験など地域のローカル体験をホストが提供するCtoCマッチング。", "parent": "宮城の農村・漁村の住民がホストになり、収穫・浜焼きなどの体験を商品化できる。", "detail": "体験のシェアリングエコノミー。", "other": "実例"}, {"no": 29, "name": "TableCheck", "summary": "飲食店の予約・顧客管理・送客を一元化（多言語対応）。", "parent": "予約が取りにくい人気牛タン店のNo show対策・インバウンド送客に有効。", "detail": "レストランDX SaaS。訪日客の事前予約に対応。", "other": "実例"}, {"no": 30, "name": "Pocket Concierge", "summary": "高級レストランの訪日向けオンライン予約（多言語・事前決済）。", "parent": "仙台の予約困難な名店を海外客に開放し、食目的の訪問需要を取り込める。", "detail": "アメックス傘下。グルメ予約。", "other": "実例"}, {"no": 31, "name": "口コミコム（mov）", "summary": "Googleマップ等の口コミ・店舗情報を一元管理・分析するSaaS。", "parent": "多言語クチコミの改善・返信で、仙台の店舗の地図検索流入を増やせる。", "detail": "MEO・評判管理。インバウンド分析に強い。", "other": "実例"}, {"no": 32, "name": "訪日ラボ / Beyond（mov）", "summary": "インバウンド市場の調査・メディア・マーケ支援。", "parent": "東北はデータが薄く、地域特化のインバウンド調査・戦略支援の価値が高い。", "detail": "訪日データ分析・プロモーション支援。", "other": "実例"}, {"no": 33, "name": "Klook（日本展開）", "summary": "体験・チケットの巨大OTA。アジア圏に強大な送客力。", "parent": "東北の体験・チケットを掲載すれば、海外大規模チャネルから仙台へ送客できる。", "detail": "香港発。日本に法人・拠点。", "other": "実例（外資）"}, {"no": 34, "name": "Voyagin（楽天）", "summary": "訪日客向けの体験・アクティビティ予約。", "parent": "楽天本拠地（楽天モバイルパーク）と絡めた観戦＋体験パッケージの造成余地がある。", "detail": "楽天グループ。体験予約。", "other": "実例"}, {"no": 35, "name": "Ikidane Nippon", "summary": "訪日客向けの英語観光メディア。", "parent": "英語記事で東北・仙台の情報を補完し、認知の薄い地域の発信を底上げできる。", "detail": "観光情報メディア。", "other": "実例"}, {"no": 36, "name": "牛タン×地酒 横丁フードツアー", "summary": "国分町・壱弐参横丁などをガイドが案内し、牛タン・地酒・郷土料理を食べ歩く少人数ツアー。", "parent": "仙台ならではの夜の食文化を体験商品化。横丁の小店にインバウンド需要を波及させ夜間経済を活性化。", "detail": "Magical Trip型の運営。ガイドは学生・地元住民を活用。1人5,000〜10,000円想定。", "other": "ビジネスモデル"}, {"no": 37, "name": "蔵王 樹氷ガイドツアー", "summary": "冬季の樹氷（スノーモンスター）を巡るスキー・スノーシュー・ナイトツアーの予約事業。", "parent": "蔵王は仙台から日帰り圏で世界的に珍しい樹氷を持つ。豪雪を逆手に取った高付加価値の冬季商品。", "detail": "アソビュー/Klook等で電子チケット販売。多言語ガイド付き。", "other": "ビジネスモデル"}, {"no": 38, "name": "松島湾 シーカヤック／SUP", "summary": "日本三景・松島でのカヤック・SUP・サンセットクルーズ等のウォーターアクティビティ予約。", "parent": "松島の景観を活かしたアクティブ体験。震災を乗り越えた湾の今を伝える発信もできる。", "detail": "季節商品。装備レンタル＋ガイド。安全管理が鍵。", "other": "ビジネスモデル"}, {"no": 39, "name": "温泉旅館 ‘1日女将/若旦那’体験", "summary": "旅館で接客・調理・着物などを体験する文化没入型プログラム。", "parent": "秋保・作並・鳴子の旅館文化を体験商品化。深い日本文化体験を求める層に刺さる。", "detail": "旅館とのレベニューシェア。少人数・高単価。", "other": "ビジネスモデル"}, {"no": 40, "name": "伊達武将隊×侍体験", "summary": "甲冑着付け・殺陣・茶道などの歴史体験プログラム予約。", "parent": "伊達政宗・仙台城という強い歴史資源を活用。SNS映えと物語性で訪日客に訴求できる。", "detail": "観光ボランティア・俳優と連携。撮影体験付き。", "other": "ビジネスモデル"}, {"no": 41, "name": "仙台七夕 飾り作りワークショップ", "summary": "七夕飾りや郷土玩具を作る季節限定の手工芸体験。", "parent": "日本三大七夕の地・仙台の祭文化を通年体験化し、閑散期の集客にもつなげられる。", "detail": "工房・商店街連携。完成品は持ち帰り土産に。", "other": "ビジネスモデル"}, {"no": 42, "name": "ずんだ・笹かま手作り体験", "summary": "ずんだ餅や笹かまぼこを作る食文化ワークショップ。", "parent": "仙台名物を『作って食べる』体験に転換。家族連れ・教育旅行にも展開可能。", "detail": "メーカー・店舗と提携。試食＋EC連動。", "other": "ビジネスモデル"}, {"no": 43, "name": "東北 古民家一棟貸し運営代行", "summary": "集落の古民家を改修し、一棟貸し民泊として運営・集客を代行。", "parent": "宮城・東北の空き家を活用した分散型宿泊。自然志向の長期滞在インバウンドに合う。", "detail": "Airbnb/Stayway掲載。清掃・運営をパッケージ化。", "other": "ビジネスモデル"}, {"no": 44, "name": "空港⇄ホテル 手荷物配送", "summary": "到着空港やホテル間で荷物を当日配送する『手ぶら観光』サービス。", "parent": "仙台空港〜市内ホテル〜温泉地の荷物移動を楽にし、周遊・連泊を促進できる。", "detail": "宅配・タクシー事業者と連携。アプリ予約。", "other": "ビジネスモデル"}, {"no": 45, "name": "位置連動 多言語AI音声ガイド", "summary": "寺社・街歩きでGPS連動の多言語オーディオガイドを提供するアプリ。", "parent": "ガイド不足の仙台城跡・瑞鳳殿等で人手をかけず多言語解説を提供できる。", "detail": "サブスク/施設課金。生成AIで解説生成。", "other": "ビジネスモデル"}, {"no": 46, "name": "QRメニュー多言語化SaaS", "summary": "飲食店のメニューをQRで多言語表示・注文できるサービス。", "parent": "個人経営の多い仙台の飲食店の言語の壁を下げ、客単価・回転を改善。", "detail": "月額SaaS。アレルギー・宗教対応表示も。", "other": "ビジネスモデル"}, {"no": 47, "name": "ハラル/ベジ対応 飲食検索・認証", "summary": "ハラル・ベジタリアン・ヴィーガン対応店を検索・認証するサービス。", "parent": "東南アジア・中東からの訪日が増える中、仙台の対応店可視化で取りこぼしを防ぐ。", "detail": "認証＋掲載課金。メニュー開発支援も。", "other": "ビジネスモデル"}, {"no": 48, "name": "訪日客向け eSIM 即時販売", "summary": "到着前後にオンラインで通信を即時購入できるeSIM販売・サポート。", "parent": "仙台空港利用客にQRで通信を提供し、観光アプリ利用・周遊を後押し。", "detail": "通信キャリアと卸契約。多言語サポート。", "other": "ビジネスモデル"}, {"no": 49, "name": "着物レンタル＋ロケ撮影パッケージ", "summary": "着物・浴衣レンタルとプロ撮影をセットにした手ぶら体験。", "parent": "仙台城跡・大崎八幡宮など映える背景が豊富。SNS拡散で集客の好循環を作れる。", "detail": "店舗＋フォトグラファー連携。", "other": "ビジネスモデル"}, {"no": 50, "name": "酒蔵見学＋農業のアグリツーリズム", "summary": "田植え・稲刈り・酒蔵見学を組み合わせた農村滞在体験の予約。", "parent": "宮城は米どころ・日本酒どころ。地酒ストーリーで高付加価値の体験を作れる。", "detail": "蔵元・農家と造成。試飲＋EC連動。", "other": "ビジネスモデル"}, {"no": 51, "name": "漁村の漁業・浜焼き体験", "summary": "定置網漁の見学や浜焼き・水産加工を体験する漁村ツーリズム。", "parent": "三陸沿岸の漁業文化と復興の歩みを体験商品化。食と学びを両立できる。", "detail": "漁協と連携。安全・保険対応が必須。", "other": "ビジネスモデル"}, {"no": 52, "name": "3.11 防災スタディツアー", "summary": "東日本大震災の被災地を巡り、防災・復興を学ぶ教育・視察ツアー。", "parent": "沿岸部と仙台を結ぶ学びの旅。教育旅行・MICE・海外視察団の需要が見込める。", "detail": "語り部ガイド・震災遺構と連携。", "other": "ビジネスモデル"}, {"no": 53, "name": "東北 e-bikeサイクリング", "summary": "電動アシスト自転車のレンタルとルート案内アプリを組み合わせた周遊事業。", "parent": "仙台近郊の里山・海岸線を自走で巡れる。二次交通の弱さを補い回遊を促進。", "detail": "拠点シェア＋GPSルート。多言語案内。", "other": "ビジネスモデル"}, {"no": 54, "name": "横丁ナイトフードクロール", "summary": "夜の横丁・屋台をはしごする少人数フードツアー（夜経済特化）。", "parent": "仙台の横丁文化を夜間の体験消費に転換。滞在時間と消費単価を伸ばせる。", "detail": "店舗と送客連携。ガイド付き。", "other": "ビジネスモデル"}, {"no": 55, "name": "富裕層向けプライベートガイド＋ハイヤー", "summary": "専属ガイドと貸切車で行くオーダーメイドの高級周遊手配。", "parent": "仙台を起点に蔵王・松島・平泉・銀山温泉等を快適に巡る高単価需要を取り込める。", "detail": "ラグジュアリー特化。英語/中国語ガイド。", "other": "ビジネスモデル"}, {"no": 56, "name": "多言語カスタマーサポート代行", "summary": "宿・施設のチャット・電話問い合わせを多言語で代行するBPO。", "parent": "人手不足の東北の宿泊施設に代わり、24時間多言語対応を提供できる。", "detail": "従量/月額課金。AI＋有人ハイブリッド。", "other": "ビジネスモデル"}, {"no": 57, "name": "混雑可視化・予約分散アプリ", "summary": "観光地の混雑をリアルタイム可視化し、時間分散予約を促すアプリ。", "parent": "観光地が集中しがちな仙台周辺の回遊を平準化し、穴場へ誘導できる。", "detail": "人流データ＋予約連携。自治体向けにも。", "other": "ビジネスモデル"}, {"no": 58, "name": "観光型MaaS（周遊MaaS）", "summary": "周遊チケット＋オンデマンド乗合等を一括予約・決済できる二次交通MaaS。", "parent": "公共交通が弱い東北で訪日客の移動課題を解決し、周遊範囲を広げられる。", "detail": "交通各社・自治体と連携。多言語アプリ。", "other": "ビジネスモデル"}, {"no": 59, "name": "医療・ウェルネスツーリズム手配", "summary": "人間ドック・温泉療養・ウェルネス滞在を組み合わせた手配サービス。", "parent": "秋保・鳴子の名湯＋医療機関を組み合わせ、富裕層の長期滞在を取り込める。", "detail": "医療機関・旅館と連携。通訳・コーディネート。", "other": "ビジネスモデル"}, {"no": 60, "name": "座禅・写経・宿坊ステイ", "summary": "寺院での座禅・写経・精進料理・宿坊宿泊を予約できる事業。", "parent": "仙台・山形周辺の寺院文化を静かな没入体験として商品化できる。", "detail": "寺院とレベニューシェア。少人数・高付加価値。", "other": "ビジネスモデル"}, {"no": 61, "name": "日本酒テイスティングパスポート", "summary": "複数の蔵元・酒販店を巡って試飲できる周遊パスのデジタル販売。", "parent": "宮城の酒蔵文化を周遊商品化。スタンプラリーで回遊と購買を促進。", "detail": "QRパス＋EC連動。蔵元ネットワーク。", "other": "ビジネスモデル"}, {"no": 62, "name": "蒸溜所・クラフトビール ツアー", "summary": "ウイスキー蒸溜所やクラフトビール醸造所を巡る見学＋試飲ツアー。", "parent": "宮城峡蒸溜所など著名な蒸溜所を擁する仙台圏は世界の愛好家を誘致できる。", "detail": "予約＋送迎。海外OTA掲載。", "other": "ビジネスモデル"}, {"no": 63, "name": "伝統工芸 職人工房 体験EC", "summary": "堤焼・仙台箪笥・玉虫塗などの工房見学・制作体験＋作品ECを一体提供。", "parent": "東北の工芸を『見る・作る・買う』に転換し、職人の収入源を多様化できる。", "detail": "工房ネットワーク＋越境EC。", "other": "ビジネスモデル"}, {"no": 64, "name": "ポップカルチャー聖地巡礼ツアー", "summary": "アニメ・映画・ドラマのロケ地や聖地を巡る企画ツアー予約。", "parent": "仙台・東北を舞台にした作品の聖地を商品化し、若年層インバウンドを呼べる。", "detail": "権利者・地域と連携。デジタルスタンプ。", "other": "ビジネスモデル"}, {"no": 65, "name": "免税・即時還付＋配送一体サービス", "summary": "免税手続きの電子化と購入品の宿・空港・自国への配送を一体化。", "parent": "仙台の土産物店の免税対応を簡素化し、手ぶら観光と購買単価向上を両立。", "detail": "POS連携＋物流。多言語対応。", "other": "ビジネスモデル"}, {"no": 66, "name": "小規模店向け 多通貨QR決済導入支援", "summary": "Alipay/WeChat Pay等の多通貨QR決済を小規模店に導入支援。", "parent": "現金主体の仙台の個人店のキャッシュレス化を進め、取りこぼしを防ぐ。", "detail": "導入・運用サポート＋手数料。", "other": "ビジネスモデル"}, {"no": 67, "name": "訪日客向け保険・SOSアシスタンス", "summary": "旅行保険＋多言語の緊急時アシスタンス（医療・トラブル対応）。", "parent": "医療機関情報が分かりにくい地方で、訪日客に安心を提供し滞在を後押し。", "detail": "保険会社と提携。アプリでSOS。", "other": "ビジネスモデル"}, {"no": 68, "name": "郷土料理 料理教室マッチング", "summary": "家庭料理・郷土料理を地元の先生に習える料理教室のマッチング。", "parent": "ずんだ・はらこ飯・芋煮など宮城の家庭料理を体験商品化できる。", "detail": "ホスト登録制。CtoC。少人数。", "other": "ビジネスモデル"}, {"no": 69, "name": "ホームビジット（家庭訪問体験）", "summary": "一般家庭を訪問し夕食や暮らしを体験するプラットフォーム。", "parent": "仙台の市民交流を体験化。国際交流に積極的な学生・家庭をホストにできる。", "detail": "ホスト審査・保険が要。CtoC。", "other": "ビジネスモデル"}, {"no": 70, "name": "自然系ワーケーション施設運営", "summary": "東北の自然の中で働けるワーケーション施設の設計・運営。", "parent": "仙台近郊の里山・温泉地で長期滞在型の働く旅を提供し関係人口を増やせる。", "detail": "IKETEL型。サブスク／法人契約。", "other": "ビジネスモデル"}, {"no": 71, "name": "教育旅行 受入コーディネート", "summary": "海外の学校・大学の教育旅行や研修の受入を企画・運営。", "parent": "東北大など大学資源が豊富な仙台は、学術・教育交流の受け皿になりやすい。", "detail": "学校・大学と連携。通訳・行程手配。", "other": "ビジネスモデル"}, {"no": 72, "name": "MICE 同伴者プログラム造成", "summary": "学会・国際会議の同伴者向けに体験・観光プログラムを造成・運営。", "parent": "国際会議都市を目指す仙台で、参加者の滞在満足度と消費を高められる。", "detail": "コンベンション協会と連携。", "other": "ビジネスモデル"}, {"no": 73, "name": "多言語デジタルサイネージ・案内所DX", "summary": "観光案内所やサイネージを多言語・対話型にDXするサービス。", "parent": "仙台駅・空港の案内をデジタル化し、人手をかけず多言語案内を提供できる。", "detail": "ハード＋SaaS。AIアバター案内も。", "other": "ビジネスモデル"}, {"no": 74, "name": "レビュー翻訳・返信代行", "summary": "訪日客の多言語レビューを翻訳し、適切に返信する評判管理代行。", "parent": "言語の壁で放置されがちな東北の店舗の評価改善・再訪促進に役立つ。", "detail": "月額課金。AI＋人手。", "other": "ビジネスモデル"}, {"no": 75, "name": "ファムトリップ／UGC招致運営", "summary": "海外インフルエンサー・メディアを招き、UGCで送客するプロモ運営。", "parent": "認知の薄い東北は招致効果が大きく、仙台発の話題づくりに有効。", "detail": "自治体・DMO案件。効果測定込み。", "other": "ビジネスモデル"}, {"no": 76, "name": "地場土産の越境EC（旅前・旅後）", "summary": "地酒・海産・銘菓などを旅行前後に海外へ販売する越境EC。", "parent": "仙台の銘産品を帰国後リピート購入につなげ、観光収入を旅の外へ拡張できる。", "detail": "多言語EC＋国際物流。", "other": "ビジネスモデル"}, {"no": 77, "name": "観光列車・ローカル線 貸切体験", "summary": "観光列車やローカル線の貸切・特別運行を体験商品として予約販売。", "parent": "仙石線・仙山線など東北の鉄道資源を非日常体験に転換できる。", "detail": "鉄道会社と連携。飲食・ガイド付き。", "other": "ビジネスモデル"}, {"no": 78, "name": "開花連動 ダイナミック旅程アプリ", "summary": "桜・紅葉の開花/見頃予測に連動して最適旅程を提案するアプリ。", "parent": "見頃が読みにくい東北で、最適タイミングの周遊提案により満足度を高められる。", "detail": "気象・人流データ活用。予約連携。", "other": "ビジネスモデル"}, {"no": 79, "name": "雪国体験パッケージ", "summary": "かまくら・雪見風呂・雪遊びなど雪国ならではの体験を商品化。", "parent": "豪雪の東北の冬を観光資源化。温暖地・東南アジア客に強く訴求できる。", "detail": "宿・地域と造成。装備レンタル。", "other": "ビジネスモデル"}, {"no": 80, "name": "星空・天体観測ガイド", "summary": "光害の少ない山間部での星空観測・ナイトツアーを予約販売。", "parent": "蔵王・里山など仙台近郊の暗い夜空を資源化し、夜間の滞在を生む。", "detail": "ガイド＋機材。季節・天候運用。", "other": "ビジネスモデル"}, {"no": 81, "name": "釣り・ジビエ・狩猟体験", "summary": "釣り・ジビエ料理・狩猟同行などアウトドア体験の予約。", "parent": "宮城の里山・海の幸を体験化。アクティブ志向の訪日客に響く。", "detail": "免許・安全管理が要。地域連携。", "other": "ビジネスモデル"}, {"no": 82, "name": "農泊×収穫＋直売プラットフォーム", "summary": "農家民泊と収穫・直売を結ぶ地域連携の予約プラットフォーム。", "parent": "宮城の農村が主体的に稼げる仕組み。食と滞在を結び地域に収益を残す。", "detail": "農家ネットワーク。決済・予約一元化。", "other": "ビジネスモデル"}, {"no": 83, "name": "訪日客向け 理美容・着付け予約", "summary": "着付け・ヘアメイク・理美容を訪日客が予約できるサービス。", "parent": "体験前の着付けや特別な日のメイク需要を仙台の事業者につなげられる。", "detail": "多言語予約。サロン連携。", "other": "ビジネスモデル"}, {"no": 84, "name": "伝統芸能 鑑賞＋体験", "summary": "神楽・太鼓・こけし絵付けなどの鑑賞と体験をセット販売。", "parent": "鳴子こけし・郷土芸能など東北の無形文化を体験商品化できる。", "detail": "保存会・工人と連携。", "other": "ビジネスモデル"}, {"no": 85, "name": "多言語ガイド育成 eラーニング", "summary": "通訳案内・地域ガイドのスキルを多言語で学べる育成プラットフォーム。", "parent": "ガイド人材の薄い東北で担い手を育て、学生の副収入源にもなる。", "detail": "資格・実地と連動。サブスク。", "other": "ビジネスモデル"}, {"no": 86, "name": "訪日客向けレンタカー＋多言語ナビ＋EV充電", "summary": "多言語ナビ・EV充電案内付きのレンタカー手配サービス。", "parent": "公共交通が弱い東北で自走周遊を支え、仙台起点の広域観光を可能にする。", "detail": "レンタカー各社と連携。アプリ予約。", "other": "ビジネスモデル"}, {"no": 87, "name": "観光インフラ スポンサー型整備", "summary": "Wi-Fi・トイレ・ベンチ等の観光インフラを企業協賛で整備・運営。", "parent": "予算の限られる地方自治体に代わり、仙台周辺の受入環境を底上げできる。", "detail": "広告・協賛モデル。自治体連携。", "other": "ビジネスモデル"}, {"no": 88, "name": "サステナブル/カーボンオフセット旅行", "summary": "環境配慮型の旅程＋CO2オフセットを組み込んだ旅行商品。", "parent": "豊かな自然を持つ東北で、サステナブル志向の欧米客に訴求できる。", "detail": "認証・オフセット連携。", "other": "ビジネスモデル"}, {"no": 89, "name": "バリアフリー・ユニバーサルツーリズム", "summary": "車椅子・高齢者・障がい者に配慮した旅程・機材・介助の手配。", "parent": "誰もが巡れる東北観光を整え、新たな訪日層と同伴需要を取り込める。", "detail": "機材レンタル＋介助者手配。", "other": "ビジネスモデル"}, {"no": 90, "name": "シニア向け ゆったり東北周遊", "summary": "医療同行・ゆとり行程のシニア特化型周遊手配。", "parent": "温泉・自然・歴史が揃う東北はシニア滞在に好適。仙台を拠点化できる。", "detail": "看護師同行オプション。", "other": "ビジネスモデル"}, {"no": 91, "name": "訪日客向け 写真撮影マッチング", "summary": "観光地でプロ/アマのフォトグラファーと訪日客をマッチング。", "parent": "仙台城跡・松島など映えスポットでの撮影需要を地元カメラマンに還元。", "detail": "CtoC。即時予約。", "other": "ビジネスモデル"}, {"no": 92, "name": "予約一元管理チャネルマネージャー", "summary": "複数OTAの在庫・料金・予約を一元管理する宿泊向けSaaS。", "parent": "OTA手数料と二重予約に悩む東北の小規模宿の運営を効率化できる。", "detail": "月額SaaS。多言語対応。", "other": "ビジネスモデル"}, {"no": 93, "name": "観光データ分析・人流可視化", "summary": "人流・消費データを可視化しDMO・自治体の施策を支援。", "parent": "データの薄い東北で、仙台・宮城の観光戦略の高度化に直結する。", "detail": "データSaaS＋分析支援。", "other": "ビジネスモデル"}, {"no": 94, "name": "民泊運営代行＋ギグ清掃手配", "summary": "民泊の運営代行に清掃・リネンのギグワーカー手配を組み合わせる。", "parent": "仙台の民泊増に対応し、学生等のスキマ就労も生み出せる。", "detail": "運営×人材プラットフォーム。", "other": "ビジネスモデル"}, {"no": 95, "name": "店舗シェア型 荷物預かり", "summary": "店舗の空きスペースを使った訪日客向け荷物預かりネットワーク。", "parent": "コインロッカー不足を補い、仙台駅周辺の手ぶら回遊を促進できる。", "detail": "ecbo型。アプリ予約・保険。", "other": "ビジネスモデル"}, {"no": 96, "name": "訪日体験ギフト券 EC", "summary": "日本での体験を贈れるギフト券のEC（海外向け販売）。", "parent": "東北の体験をギフト化し、訪日前の期待醸成と送客につなげられる。", "detail": "体験事業者と連携。多通貨決済。", "other": "ビジネスモデル"}, {"no": 97, "name": "バーチャル観光→現地送客", "summary": "オンライン体験・VRで関心を喚起し、後日の現地訪問へ送客。", "parent": "認知の薄い東北の魅力を事前に伝え、実際の仙台訪問の動機を作れる。", "detail": "オンライン課金＋送客手数料。", "other": "ビジネスモデル"}, {"no": 98, "name": "地域通貨・観光ポイントアプリ", "summary": "回遊・消費でポイントが貯まる観光向け地域通貨アプリ。", "parent": "仙台中心部と周辺の回遊を促し、地域内消費を循環させられる。", "detail": "加盟店ネットワーク＋決済。", "other": "ビジネスモデル"}, {"no": 99, "name": "オンデマンド遠隔医療通訳", "summary": "医療現場でスマホ越しに多言語通訳を即時提供するサービス。", "parent": "外国語対応医療機関が少ない東北で、訪日客の安心と医療機関の負担軽減を両立。", "detail": "従量課金。医療機関・宿に提供。", "other": "ビジネスモデル"}, {"no": 100, "name": "東北周遊 DMO型バンドルOTA", "summary": "周遊パス×宿×体験をバンドルして直接販売するDMO型OTA。", "parent": "Golden Routeに偏る送客を東北へ広げ、仙台を周遊ハブにできる地域主導の販売基盤。", "detail": "地域事業者連携。多言語・多通貨。", "other": "ビジネスモデル"}];
 
-// ── STATE ──
 let favs = new Set();
 let filterOn = false;
 let idx = 0;
-let flipped = false;
-let db = null;
-let userId = null;
-let unsubFn = null;
+let db = null, userId = null, unsubFn = null;
 
-// ── LOCAL STORAGE HELPERS ──
 function loadLocalFavs() { return new Set(JSON.parse(localStorage.getItem('idea_favs')||'[]')); }
 function saveLocalFavs() { localStorage.setItem('idea_favs', JSON.stringify([...favs])); }
 function getSavedCfg() { try { return JSON.parse(localStorage.getItem('firebase_cfg')||'null'); } catch { return null; } }
 
-// ── FIREBASE ──
 async function initFB(cfg) {
   try {
     const existing = getApps().find(a => a.name === 'idea');
@@ -277,11 +275,10 @@ async function initFB(cfg) {
   } catch(e) { console.error(e); db = null; return false; }
 }
 
-async function subscribeFirestore() {
+async function subscribeFavs() {
   if (!db || !userId) return;
   if (unsubFn) unsubFn();
-  const ref = doc(db, 'users', userId);
-  unsubFn = onSnapshot(ref, snap => {
+  unsubFn = onSnapshot(doc(db,'users',userId), snap => {
     favs = new Set(snap.exists() ? (snap.data().favorites||[]) : []);
     updateBadge(); render();
   });
@@ -290,12 +287,9 @@ async function subscribeFirestore() {
 async function writeFavs() {
   if (db && userId) {
     await setDoc(doc(db,'users',userId), { favorites:[...favs], ts: Date.now() });
-  } else {
-    saveLocalFavs();
-  }
+  } else { saveLocalFavs(); }
 }
 
-// ── MODAL ──
 window.openModal = function() {
   const cfg = getSavedCfg();
   if (cfg) document.getElementById('cfgInput').value = JSON.stringify(cfg, null, 2);
@@ -314,43 +308,39 @@ window.saveConfig = async function() {
   if (ok) {
     setStatus('ok', 'Firebase接続成功！');
     document.getElementById('btnGear').classList.add('configured');
-    await subscribeFirestore();
+    await subscribeFavs();
     setTimeout(closeModal, 1200);
-  } else {
-    setStatus('err', '接続失敗。設定を確認してください。');
-  }
+  } else { setStatus('err', '接続失敗。設定を確認してください。'); }
 };
 
 function setStatus(state, text) {
-  const dot = document.getElementById('sDot');
-  const txt = document.getElementById('sText');
-  dot.className = 's-dot' + (state==='ok' ? ' ok' : state==='err' ? ' err' : '');
-  txt.textContent = text || (
+  document.getElementById('sDot').className = 's-dot'+(state==='ok'?' ok':state==='err'?' err':'');
+  document.getElementById('sText').textContent = text||(
     state==='ok' ? 'Firebase接続済み (uid:' + (userId||'').slice(0,8) + '...)' :
-    state==='err' ? '設定あり・接続失敗' :
-    '未設定（このデバイスのみ保存）'
+    state==='err' ? '設定あり・接続失敗' : '未設定（このデバイスのみ保存）'
   );
 }
 
-// ── UTILS ──
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function pool(){ return filterOn ? DATA.filter(c=>favs.has(c.no)) : DATA; }
 function updateBadge(){ document.getElementById('favBadge').textContent = favs.size; }
 
-function sceneHTML(){ return `<div class="card-scene" id="scene"><div class="card" id="card" onclick="flip()"><div class="face face-front" id="front"></div><div class="face face-back" id="back"></div></div></div>`; }
+function sceneHTML(){
+  return `<div class="card-scene" id="scene"><div class="card" id="card"><div class="card-header" id="header"></div><div class="card-body" id="body"></div></div></div>`;
+}
 
 function bindTouch(){
   const s = document.getElementById('scene');
   if (!s) return;
-  let tx=0,ty=0;
-  s.addEventListener('touchstart', e=>{ tx=e.touches[0].clientX; ty=e.touches[0].clientY; },{passive:true});
+  let tx=0, ty=0, moved=false;
+  s.addEventListener('touchstart', e=>{ tx=e.touches[0].clientX; ty=e.touches[0].clientY; moved=false; },{passive:true});
+  s.addEventListener('touchmove', e=>{ moved=true; },{passive:true});
   s.addEventListener('touchend', e=>{
     const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
     if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>44) go(dx<0?1:-1);
   },{passive:true});
 }
 
-// ── RENDER ──
 window.render = function() {
   const list = pool();
   updateBadge();
@@ -362,40 +352,53 @@ window.render = function() {
   }
   document.getElementById('actions').style.display='';
   if (!document.getElementById('scene')){ ca.innerHTML=sceneHTML(); bindTouch(); }
-  idx = Math.max(0,Math.min(idx,list.length-1));
+
+  idx = Math.max(0, Math.min(idx, list.length-1));
   const c = list[idx];
   const pct = list.length>1 ? (idx/(list.length-1)*100).toFixed(1) : 100;
-  document.getElementById('pLabel').textContent=(idx+1)+' / '+list.length;
-  document.getElementById('pFill').style.width=pct+'%';
-  document.getElementById('btnPrev').disabled=idx<=0;
-  document.getElementById('btnNext').disabled=idx>=list.length-1;
-  const isFav=favs.has(c.no);
-  const hb=document.getElementById('btnHeart');
-  hb.innerHTML=isFav?'&#9829;':'&#9825;';
-  hb.classList.toggle('on',isFav);
-  document.getElementById('front').innerHTML=`
-    <div class="card-no">No.${String(c.no).padStart(2,'0')}</div>
-    <div class="card-name">${esc(c.name)}</div>
-    <div class="card-line"></div>
-    <div class="card-summary">${esc(c.summary)}</div>
-    <div class="card-hint">&#9660; タップして詳細</div>`;
-  let bk=`<div class="back-name">${esc(c.name)}</div><div class="back-scroll">`;
-  if(c.parent) bk+=`<div class="back-sec"><div class="back-lbl">強みと親和性</div><div class="back-txt">${esc(c.parent)}</div></div>`;
-  if(c.detail) bk+=`<div class="back-sec"><div class="back-lbl">詳細</div><div class="back-txt">${esc(c.detail)}</div></div>`;
-  if(c.other&&c.other!=='None') bk+=`<div class="back-sec"><div class="back-lbl">その他</div><div class="back-txt">${esc(c.other)}</div></div>`;
-  bk+=`</div>`;
-  document.getElementById('back').innerHTML=bk;
-  const card=document.getElementById('card');
-  if(flipped){ card.classList.remove('flipped'); flipped=false; }
+  document.getElementById('pLabel').textContent = (idx+1)+' / '+list.length;
+  document.getElementById('pFill').style.width = pct+'%';
+  document.getElementById('btnPrev').disabled = idx<=0;
+  document.getElementById('btnNext').disabled = idx>=list.length-1;
+
+  const isFav = favs.has(c.no);
+  const hb = document.getElementById('btnHeart');
+  hb.innerHTML = isFav ? '&#9829;' : '&#9825;';
+  hb.classList.toggle('on', isFav);
+
+  // Header
+  document.getElementById('header').innerHTML =
+    `<div class="card-no">No.${String(c.no).padStart(2,'0')}</div>` +
+    `<div class="card-name">${esc(c.name)}</div>`;
+
+  // Body — all sections
+  let body = '';
+  if (c.summary) body += `
+    <div class="section">
+      <div class="section-label lbl-summary">概要</div>
+      <div class="section-text summary">${esc(c.summary)}</div>
+    </div>`;
+  if (c.parent) body += `
+    <div class="section">
+      <div class="section-label lbl-strength">強みと親和性</div>
+      <div class="section-text">${esc(c.parent)}</div>
+    </div>`;
+  if (c.detail) body += `
+    <div class="section">
+      <div class="section-label lbl-detail">詳細</div>
+      <div class="section-text">${esc(c.detail)}</div>
+    </div>`;
+  if (c.other && c.other !== 'None') body += `
+    <div class="section">
+      <div class="section-label lbl-other">その他</div>
+      <div class="section-text">${esc(c.other)}</div>
+    </div>`;
+
+  const bodyEl = document.getElementById('body');
+  bodyEl.innerHTML = body;
+  bodyEl.scrollTop = 0;
 };
 
-// ── INTERACTIONS ──
-window.flip = function(){
-  const card=document.getElementById('card');
-  if(!card) return;
-  flipped=!flipped;
-  card.classList.toggle('flipped',flipped);
-};
 window.go = function(dir){
   const list=pool(), next=idx+dir;
   if(next<0||next>=list.length) return;
@@ -405,13 +408,15 @@ window.go = function(dir){
   scene.classList.add(out);
   setTimeout(()=>{
     scene.classList.remove(out);
-    idx=next; flipped=false; render();
+    idx=next;
+    render();
     requestAnimationFrame(()=>{
       const s2=document.getElementById('scene');
       if(s2){ s2.classList.add(inn); setTimeout(()=>s2.classList.remove(inn),350); }
     });
   },260);
 };
+
 window.toggleFav = async function(e){
   e.stopPropagation();
   const list=pool();
@@ -427,8 +432,9 @@ window.toggleFav = async function(e){
   await writeFavs();
   render();
 };
+
 window.toggleFilter = function(){
-  filterOn=!filterOn; idx=0; flipped=false;
+  filterOn=!filterOn; idx=0;
   document.getElementById('btnFav').classList.toggle('active',filterOn);
   const ca=document.getElementById('cardArea');
   if(!document.getElementById('scene')){ ca.innerHTML=sceneHTML(); bindTouch(); }
@@ -438,18 +444,16 @@ window.toggleFilter = function(){
 document.addEventListener('keydown', e=>{
   if(e.key==='ArrowRight') go(1);
   else if(e.key==='ArrowLeft') go(-1);
-  else if(e.key===' '){ e.preventDefault(); flip(); }
   else if(e.key==='f') toggleFav(e);
 });
 
-// ── BOOT ──
 async function boot() {
   const cfg = getSavedCfg();
   if (cfg) {
     const ok = await initFB(cfg);
     if (ok) {
       document.getElementById('btnGear').classList.add('configured');
-      await subscribeFirestore();
+      await subscribeFavs();
       return;
     }
   }
